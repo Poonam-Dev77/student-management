@@ -64,6 +64,20 @@ pipeline {
 
         }
 
+        stage('Deploy Docker Container') {
+            steps {
+                sh '''
+                docker stop student-app || true
+                docker rm student-app || true
+
+                docker run -d \
+                --name student-app \
+                -p 8080:8080 \
+                267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
+                '''
+    }
+}
+
         stage('push to ECR'){
             steps{
                 sh '''
