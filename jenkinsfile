@@ -1,4 +1,4 @@
-pipeline {
+'''pipeline {
     agent {
         label "worker"
     }
@@ -84,6 +84,29 @@ pipeline {
                     kubectl get pods
                     kubectl get svc -o wide
                 '''
+            }
+        }
+    }
+}'''
+
+
+
+
+
+pipeline {
+    agent {
+        label "worker"
+    }
+
+    tools {
+        maven "maven"
+    }
+
+    stages {
+
+        stage('Build'){
+            steps {
+                sh "mvn clean package"
             }
         }
     }
