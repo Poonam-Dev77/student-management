@@ -11,7 +11,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "mayurcbz.space"
+    bucket       = "krushna.online123123"
     key          = "student-management/eks/terraform.tfstate"
     region       = "us-west-2"
     use_lockfile = true
