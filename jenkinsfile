@@ -15,7 +15,7 @@
 
         stage('Checkout'){
             steps{
-                git 'https://github.com/mayurpandit25/student-management.git'
+                git 'https://github.com/krushnadeshmukh7/student-management.git'
                 echo "Clonning is Successful"
             }
         }
@@ -35,7 +35,7 @@
 
         stage('Artifacts to s3') {
             steps {
-                sh 'aws s3 cp target/*.war s3://mayurcbz.space/Artifacts/student.war'
+                sh 'aws s3 cp target/*.war s3://krushna.online12134/Artifacts/student.war'
             }
         }
 
