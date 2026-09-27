@@ -34,7 +34,9 @@ pipeline {
 
         stage('Upload to S3') {
             steps {
-                sh 'aws s3 cp target/student-management.war s3://krushna.online123123/'
+                sh '''
+                    aws s3 cp target/student-management.war s3://krushna.online123123/
+                '''
             }
         }
 
@@ -57,38 +59,45 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh '''
-                docker build --no-cache -t student .
-                docker images
+                    docker build --no-cache -t student .
+                    docker images
                 '''
             }
-
         }
 
-        stage('Deploy Docker Container') {
+        stage('Push to ECR') {
             steps {
                 sh '''
-                docker stop student-app || true
-                docker rm student-app || true
+                    aws ecr get-login-password --region us-west-2 | \
+                    docker login --username AWS --password-stdin \
+                    267850879086.dkr.ecr.us-west-2.amazonaws.com
 
-                docker run -d \
-                --name student-app \
-                -p 8080:8080 \
-                267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
+                    docker tag student:latest \
+                    267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
+
+                    docker push \
+                    267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
                 '''
-    }
-}
+            }
+        }
 
-        stage('push to ECR'){
-            steps{
+        stage('Deployment on Kubernetes') {
+            steps {
                 sh '''
-                  aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 267850879086.dkr.ecr.us-west-2.amazonaws.com
-                  docker tag student:latest 267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
-                  docker push 267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
-                  '''
+                    aws eks update-kubeconfig \
+                    --name my-eks-cluster \
+                    --region us-west-2
 
+                    kubectl apply -f k8s/
+
+                    echo "Waiting for Kubernetes deployment..."
+
+                    sleep 30
+
+                    kubectl get pods
+                    kubectl get svc -o wide
+                '''
             }
         }
     }
-
-
 }
