@@ -1,4 +1,5 @@
-'''pipeline {
+pipeline {
+
     agent {
         label "worker"
     }
@@ -7,25 +8,20 @@
         maven 'maven'
     }
 
-    environment {
-        my_aws_cred = credentials('aws-cred')
-    }
+    stages {
 
-    stages{
-
-        stage('Checkout'){
-            steps{
+        stage('Checkout') {
+            steps {
                 git 'https://github.com/krushnadeshmukh7/student-management.git'
-                echo "Clonning is Successful"
+                echo "Cloning is Successful"
             }
         }
 
         stage('Build') {
             steps {
-                sh '''
-                  mvn clean package
-                '''
+                sh 'mvn clean package'
             }
+
             post {
                 success {
                     archiveArtifacts artifacts: '**/target/*.war', fingerprint: true
@@ -33,63 +29,5 @@
             }
         }
 
-        stage('Artifacts to s3') {
-            steps {
-                sh 'aws s3 cp target/*.war s3://krushna.online12134/Artifacts/student.war'
-            }
-        }
-
-        stage('SonarQube Analysis'){
-            steps {
-                withSonarQubeEnv('sonar'){
-                    sh 'mvn sonar:sonar'
-                }
-            }
-        }
-
-        stage('Quality Gates') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES'){
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                sh '''
-                    docker build --no-cache -t student .
-                    docker images
-                '''
-            }
-        }
-
-        stage('Push to ECR') {
-            steps{
-                sh '''
-                    aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 419819289041.dkr.ecr.us-west-2.amazonaws.com
-                    docker tag student:latest 419819289041.dkr.ecr.us-west-2.amazonaws.com/student:latest
-                    docker push 419819289041.dkr.ecr.us-west-2.amazonaws.com/student:latest
-                '''
-            }
-        }
-
-        stage('Deployment on Kubernetes'){
-            steps{
-                sh '''
-                    aws eks update-kubeconfig --name my-eks-cluster --region us-west-2
-                    kubectl apply -f k8s/
-                    kubectl get pods 
-                    sleep 30
-                    kubectl get pods
-                    kubectl get svc -o wide
-                '''
-            }
-        }
     }
-}'''
-
-
-
-
-
+}
