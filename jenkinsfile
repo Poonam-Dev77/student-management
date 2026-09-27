@@ -34,15 +34,24 @@ pipeline {
 
         stage('Upload to S3') {
             steps {
-                sh 'aws s3 cp target/*.war s3://krushna.online1234/'
+                sh 'aws s3 cp target/student-management.war s3://krushna.online1234/'
             }
         }
 
-        stage('SonarQube Analysis'){
+        stage('SonarQube Analysis') {
             steps {
-                withForQualityGate abortPipeline: true
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 }
