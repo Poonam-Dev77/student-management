@@ -80,8 +80,8 @@ pipeline {
         stage('Deployment on Kubernetes') {
             steps {
                 sh '''
-                aws eks update-kubeconfig \
-                --name my-eks-cluster14 \
+                aws eks update-kubeconfig 
+                --name student-eks-cluster 
                 --region ap-southeast-1
 
                 kubectl apply -f k8s/
