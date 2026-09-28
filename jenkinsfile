@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/krushnadeshmukh7/student-management.git'
+                    url: 'https://github.com/Poonam-Dev77/student-management.git'
 
                 echo "Cloning is successful"
             }
@@ -32,72 +32,3 @@ pipeline {
             }
         }
 
-        stage('Upload to S3') {
-            steps {
-                sh '''
-                    aws s3 cp target/student-management.war s3://krushna.online123123/
-                '''
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonar') {
-                    sh 'mvn sonar:sonar'
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                sh '''
-                    docker build --no-cache -t student .
-                    docker images
-                '''
-            }
-        }
-
-        stage('Push to ECR') {
-            steps {
-                sh '''
-                    aws ecr get-login-password --region us-west-2 | \
-                    docker login --username AWS --password-stdin \
-                    267850879086.dkr.ecr.us-west-2.amazonaws.com
-
-                    docker tag student:latest \
-                    267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
-
-                    docker push \
-                    267850879086.dkr.ecr.us-west-2.amazonaws.com/student:latest
-                '''
-            }
-        }
-
-        stage('Deployment on Kubernetes') {
-            steps {
-                sh '''
-                    aws eks update-kubeconfig \
-                    --name my-eks-cluster \
-                    --region us-west-2
-
-                    kubectl apply -f k8s/
-
-                    echo "Waiting for Kubernetes deployment..."
-
-                    sleep 30
-
-                    kubectl get pods
-                    kubectl get svc -o wide
-                '''
-            }
-        }
-    }
-}
