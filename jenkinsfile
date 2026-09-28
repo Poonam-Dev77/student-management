@@ -3,22 +3,27 @@ pipeline {
     agent {
         label 'worker'
     }
+
     tools {
         maven 'mvn'
     }
+
     stages {
-        stage ('Checkout') {
+
+        stage('Checkout') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/Poonam-Dev77/student-management.git'
+                    url: 'https://github.com/Poonam-Dev77/student-management.git'
 
                 echo "Cloning is successful"
             }
         }
+
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
+
             post {
                 success {
                     archiveArtifacts artifacts: '**/target/*.war',
@@ -26,14 +31,16 @@ pipeline {
                 }
             }
         }
-        stage ('Upload to S3') {
+
+        stage('Upload to S3') {
             steps {
                 sh '''
-                  aws s3 cp target/student-management.war s3://deploywithpoonam.spaace/
-                  '''
+                    aws s3 cp target/student-management.war s3://deploywithpoonam.spaace/
+                '''
             }
         }
-        stage ('SonarQube Abalysis') {
+
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh 'mvn sonar:sonar'
@@ -41,19 +48,21 @@ pipeline {
             }
         }
 
-       stage ('Quality Gate')  {
+        stage('Quality Gate') {
             steps {
-            timeout  (time: 5, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
-       }
-       stage ('Docker Build')  {
+
+        stage('Docker Build') {
             steps {
-               sh '''
-            docker build --no-cache -t student .
-            docker images
-            ''' 
-       }
+                sh '''
+                    docker build --no-cache -t student .
+                    docker images
+                '''
+            }
+        }
     }
 }
