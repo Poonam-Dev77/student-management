@@ -76,6 +76,23 @@ pipeline {
                 docker push 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
                 '''
             } 
-        }      
+        } 
+        stage('Deployment on Kubernetes') {
+            steps {
+                sh '''
+                aws eks update-kubecofig \
+                --name my-eks-cluster14 \
+                --region ap-southeast-1
+
+                kubectl applu -f k8s/
+
+                echo "Waiting for Kubernetes deployment..."
+
+                sleep 30
+
+                kubectl get pods
+                kubectl get svc -o wide
+            }
+        }    
     }
 }

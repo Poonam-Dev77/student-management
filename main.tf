@@ -11,15 +11,15 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "krushna.online123123"
+    bucket       = "deploywithpoonam.spaace"
     key          = "student-management/eks/terraform.tfstate"
-    region       = "us-west-2"
+    region       = "ap-southeast-1"
     use_lockfile = true
   }
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = "ap-southeast-1"
 }
 
 # Fetch default VPC
@@ -30,7 +30,7 @@ data "aws_vpc" "default" {
 # Variable for cluster name
 variable "cluster_name" {
   type    = string
-  default = "my-eks-cluster"
+  default = "my-eks-cluster14"
 }
 
 # Fetch all subnets in the default VPC
