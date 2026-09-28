@@ -80,7 +80,7 @@ pipeline {
         stage('Deployment on Kubernetes') {
             steps {
                 sh '''
-                aws eks update-kubecofig \
+                aws eks update-kubeconfig \
                 --name my-eks-cluster14 \
                 --region ap-southeast-1
 
