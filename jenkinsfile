@@ -3,27 +3,22 @@ pipeline {
     agent {
         label 'worker'
     }
-
     tools {
         maven 'mvn'
     }
-
     stages {
-
-        stage('Checkout') {
+        stage ('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Poonam-Dev77/student-management.git'
+                url: 'https://github.com/Poonam-Dev77/student-management.git'
 
                 echo "Cloning is successful"
             }
         }
-
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
-
             post {
                 success {
                     archiveArtifacts artifacts: '**/target/*.war',
@@ -33,4 +28,3 @@ pipeline {
         }
     }
 }
-
