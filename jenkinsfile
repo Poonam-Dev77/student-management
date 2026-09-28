@@ -33,5 +33,12 @@ pipeline {
                   '''
             }
         }
+        stage ('SonarQube Abalysis') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
     }
 }
