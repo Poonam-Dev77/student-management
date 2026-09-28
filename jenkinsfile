@@ -48,5 +48,12 @@ pipeline {
             }
         }
        }
+       stage ('Docker Build')
+       steps {
+        sh '''
+            docker bild --no-cache -t student .
+            docker images
+            ''' 
+       }
     }
 }
