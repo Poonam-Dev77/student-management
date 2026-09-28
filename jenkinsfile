@@ -84,7 +84,7 @@ pipeline {
                 --name my-eks-cluster14 \
                 --region ap-southeast-1
 
-                kubectl applu -f k8s/
+                kubectl apply -f k8s/
 
                 echo "Waiting for Kubernetes deployment..."
 
