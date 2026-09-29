@@ -71,6 +71,33 @@ jobs:
       - name: Scan Image Using Trivy
         run: trivy image --scanners vuln --severity HIGH,CRITICAL --exit-code 0 student:latest
 
+      - name: Push Image to ECR
+        run: |
+        aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com
+        docker tag student:latest 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
+        docker push 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
+
+      - name: Terraform Installation
+        uses: hashicorp/setup-terraform@v4
+        with:
+          version: latest
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Apply 
+        run: terraform apply -auto-approve
+
+      - name: kubectl install
+        uses: azure/setup-kubectl@v4
+
+
+
+        
+
         
     
 
