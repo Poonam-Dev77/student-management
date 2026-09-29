@@ -73,9 +73,9 @@ jobs:
 
       - name: Push Image to ECR
         run: |
-        aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com
-        docker tag student:latest 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
-        docker push 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
+          aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com
+          docker tag student:latest 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
+          docker push 172030246609.dkr.ecr.ap-southeast-1.amazonaws.com/student:latest
 
       - name: Terraform Installation
         uses: hashicorp/setup-terraform@v4
