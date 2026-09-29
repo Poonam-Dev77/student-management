@@ -6,11 +6,12 @@ pipeline {
 
     tools {
         maven 'mvn'
+        terraform 'tf'
     }
      environment {
         AWS_DEFAULT_REGION = 'ap-southeast-1'
     }
-    stages {
+    stage {
 
         stage('Checkout') {
             steps {
@@ -66,6 +67,7 @@ pipeline {
                 '''
             }
         }
+
         stage('Push to ECR') {
             steps {
                 sh '''
@@ -77,6 +79,43 @@ pipeline {
                 '''
             } 
         } 
+
+        stage('Terraform Init') {
+            steps {
+                sh '''
+                terraform init
+                '''
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                sh '''
+                terraform validate
+                '''
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh '''
+                terraform apply -auto-approve
+                '''
+            }
+        }
+
+        stage('Verify EKS Cluster'){
+            steps {
+                sh '''
+                aws eks describe-cluster \
+                --name student-eks-cluster \
+                --region ap-southeast-1
+
+                echo "EKS cluster is available"
+                '''
+            }
+        }  
+          
         stage('Deployment on Kubernetes') {
             steps {
                 sh '''
