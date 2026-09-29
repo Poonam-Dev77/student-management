@@ -12,7 +12,7 @@ terraform {
 
   backend "s3" {
     bucket       = "deploywithpoonam.spaace"
-    key          = "student-management/eks/terraform.tfstate"
+    key          = "terraform.tfstate"
     region       = "ap-southeast-1"
     use_lockfile = true
   }
