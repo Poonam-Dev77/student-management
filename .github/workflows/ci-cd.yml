@@ -1,4 +1,3 @@
-
 name: student-management ci-cd
 
 on:
@@ -9,3 +8,7 @@ on:
 jobs:
   ci-cd:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
