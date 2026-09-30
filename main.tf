@@ -11,7 +11,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "deploywithpoonam.spaace"
+    bucket       = "poonam.space"
     key          = "terraform.tfstate"
     region       = "ap-southeast-1"
     use_lockfile = true
@@ -30,7 +30,7 @@ data "aws_vpc" "default" {
 # Variable for cluster name
 variable "cluster_name" {
   type    = string
-  default = "new-eks-cluster-my"
+  default = "new-eks1-cluster-my"
 }
 
 # Fetch all subnets in the default VPC
